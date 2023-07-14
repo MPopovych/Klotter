@@ -1,4 +1,4 @@
-package com.makki.klotter.models
+package com.makki.klotter.handlers.models
 
 data class KLineDrawing(
 	val open: Number,

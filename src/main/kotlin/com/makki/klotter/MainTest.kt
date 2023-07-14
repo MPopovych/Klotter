@@ -10,7 +10,8 @@ import androidx.compose.ui.window.application
 import com.makki.klotter.elements.Plot
 import com.makki.klotter.builder.PlotDataBuilder
 import com.makki.klotter.builder.PlotNavBuilder
-import com.makki.klotter.models.KLineDrawing
+import com.makki.klotter.builder.PlotTitleBuilder
+import com.makki.klotter.handlers.models.KLineDrawing
 import com.makki.klotter.utils.SimpleWindow
 import kotlin.random.Random
 
@@ -34,12 +35,16 @@ fun main() = application {
 	}
 
 	val data1 = PlotDataBuilder(map1.keys)
+		.title("Volumetric data")
+		.titleData(PlotTitleBuilder().topRight().build())
 		.addLineData("line1", map1, color = Color.Yellow, stroke = true, smooth = true)
 		.addLineData("line2", map2, color = Color.Red, stroke = false, smooth = true)
 		.addPointData("line3", map3, color = Color.White)
 		.build()
 
 	val data2 = PlotDataBuilder(map1.keys)
+		.title("Kline data")
+		.titleData(PlotTitleBuilder().topRight().build())
 		.addCandleData("candle", mapCandle)
 		.build()
 	val builder = PlotNavBuilder(40).separateHZoom().fromEnd()

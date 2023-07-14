@@ -3,22 +3,33 @@ package com.makki.klotter.builder
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
-import com.makki.klotter.elements.DrawContext
-import com.makki.klotter.handlers.PlotDataHandler
 import com.makki.klotter.handlers.implementations.DotHandler
 import com.makki.klotter.handlers.implementations.KLineHandler
 import com.makki.klotter.handlers.implementations.LineHandler
-import com.makki.klotter.models.KLineDrawing
-import com.makki.klotter.utils.safeSub
+import com.makki.klotter.handlers.models.KLineDrawing
 
-enum class HorizontalDirection {
-	FromStart,
-	FromEnd,
-}
 
 class PlotDataBuilder(private val ids: Collection<String>) {
 	private val meta = LinkedHashMap<String, MetaData>()
 	private val data = LinkedHashMap<String, RowData<*>>()
+	private var axisData = PlotAxisData.default()
+	private var titleData = PlotTitleData.default()
+	private var title: String? = null
+
+	fun title(text: String?): PlotDataBuilder {
+		title = text
+		return this
+	}
+
+	fun titleData(data: PlotTitleData): PlotDataBuilder {
+		titleData = data
+		return this
+	}
+
+	fun axisData(data: PlotAxisData): PlotDataBuilder {
+		axisData = data
+		return this
+	}
 
 	fun addRowData(name: String, rowData: RowData<*>, metaData: MetaData): PlotDataBuilder {
 		meta[name] = metaData
@@ -77,6 +88,9 @@ class PlotDataBuilder(private val ids: Collection<String>) {
 			ids = LinkedHashSet(ids),
 			rows = LinkedHashMap(data),
 			meta = LinkedHashMap(meta),
+			axisData = axisData,
+			titleData = titleData,
+			title = title,
 		)
 	}
 }
@@ -85,6 +99,9 @@ class PlotData(
 	ids: LinkedHashSet<String>,
 	val rows: Map<String, RowData<*>>,
 	val meta: Map<String, MetaData>,
+	val axisData: PlotAxisData,
+	val titleData: PlotTitleData,
+	val title: String?
 ) {
 	val idList = ids.toList()
 	fun count() = idList.size
@@ -103,42 +120,4 @@ class PlotData(
 class MetaData(
 	val focus: Boolean,
 )
-
-class RowData<T>(
-	val handler: PlotDataHandler<T>,
-	val values: HashMap<String, T>
-) {
-
-	var cachedData: List<T?>? = null
-
-	internal fun bakeCache(ids: Collection<String>) {
-		cachedData = ids.map { values[it] }
-	}
-
-	fun count() = values.size
-
-	fun drawForIds(context: DrawContext, ids: Collection<String>) {
-		handler.draw(context, getForIds(ids))
-	}
-
-	fun drawFastForIds(context: DrawContext, range: IntRange) {
-		handler.draw(context, getCachedForRange(range))
-	}
-
-	fun topForIds(ids: Collection<String>): Float? {
-		return getForIds(ids).maxOfOrNull { handler.topFocus(it) }
-	}
-
-	fun botForIds(ids: Collection<String>): Float? {
-		return getForIds(ids).minOfOrNull { handler.botFocus(it) }
-	}
-
-	private fun getForIds(ids: Collection<String>): List<T> {
-		return ids.mapNotNull { values[it] }
-	}
-
-	private fun getCachedForRange(ids: IntRange): List<T?> {
-		return cachedData?.safeSub(ids.first, ids.last) ?: throw IllegalStateException()
-	}
-}
 

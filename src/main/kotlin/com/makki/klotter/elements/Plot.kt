@@ -11,18 +11,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipRect
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.makki.klotter.builder.PlotData
 import com.makki.klotter.builder.PlotNavigation
 import com.makki.klotter.utils.PlotDataUtils
-import com.makki.klotter.utils.drawText
-import com.makki.klotter.utils.safeSub
 import org.jetbrains.skia.Font
 import org.jetbrains.skia.Paint
 import org.jetbrains.skia.Typeface
@@ -35,7 +31,6 @@ fun Plot(
 	plotNavigation: PlotNavigation,
 	modifier: Modifier = Modifier,
 ) {
-
 	var itemOffset by remember { plotNavigation.itemOffset }
 	var hZoom by remember { plotNavigation.horizontalZoom }
 	var vZoom by remember { plotNavigation.verticalZoom }
@@ -76,10 +71,10 @@ fun Plot(
 				val startId: Int = floor(itemOffset).roundToInt()
 				val endId: Int = startId + visibleItemsZoomed.roundToInt()
 
-				val visibleIds = plotData.idList.safeSub(startId, endId)
+				val visibleRange = IntRange(startId, endId)
 
-				val dataTop = PlotDataUtils.getTopOfVisibleValue(visibleIds, plotData) ?: 1f
-				val dataBot = PlotDataUtils.getBotOfVisibleValue(visibleIds, plotData) ?: -1f
+				val dataTop = PlotDataUtils.getTopOfVisibleValue(visibleRange, plotData) ?: 1f
+				val dataBot = PlotDataUtils.getBotOfVisibleValue(visibleRange, plotData) ?: -1f
 				val mid = (dataTop + dataBot) / 2f
 				val dataHeightWZoom = (dataTop - dataBot) * vZoomCoeff
 				val dataTopWZoom = mid + dataHeightWZoom / 2f
@@ -99,16 +94,18 @@ fun Plot(
 					leftOffset,
 					visibleItemsZoomed
 				)
-
-				drawGrid(drawContext, visibleIds.size, startId)
+				val lastValidCount = min(plotData.count(), endId)
+				val lastValidStart = min(lastValidCount, startId)
+				val realItemCount = max(min(visibleRange.count(), lastValidCount - lastValidStart), 0)
+				drawGrid(plotData.axisData, drawContext, realItemCount, startId)
 
 				plotData.rows.values.forEach { u ->
 					u.drawFastForIds(drawContext, IntRange(startId, endId))
 				}
 
-				drawText(
-					"c:${plotNavigation.updateListener.value} Preview", font, fontPaint
-				)
+				plotData.title?.also {  title ->
+					drawTitle(plotData.titleData, title, size)
+				}
 			}
 		})
 

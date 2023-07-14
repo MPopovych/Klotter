@@ -3,10 +3,6 @@ package com.makki.klotter.builder
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 
-enum class InitialScroll {
-	FromStart,
-	FromEnd,
-}
 
 class PlotNavBuilder(private var visible: Int? = null) {
 
@@ -71,4 +67,10 @@ class PlotNavigation internal constructor(
 	val direction: InitialScroll,
 ) {
 	val updateListener: MutableState<Int> = mutableStateOf(1)
+
+	companion object {
+		fun default(plotData: PlotData): PlotNavigation {
+			return PlotNavBuilder().fromStart().visible(64).separateVZoom().buildFor(plotData)
+		}
+	}
 }
