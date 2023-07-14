@@ -4,12 +4,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import com.makki.klotter.elements.DrawContext
-import com.makki.klotter.elements.safeSub
 import com.makki.klotter.handlers.PlotDataHandler
 import com.makki.klotter.handlers.implementations.DotHandler
 import com.makki.klotter.handlers.implementations.KLineHandler
 import com.makki.klotter.handlers.implementations.LineHandler
 import com.makki.klotter.models.KLineDrawing
+import com.makki.klotter.utils.safeSub
 
 enum class HorizontalDirection {
 	FromStart,
