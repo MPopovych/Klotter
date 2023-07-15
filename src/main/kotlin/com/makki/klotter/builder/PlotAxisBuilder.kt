@@ -1,17 +1,21 @@
 package com.makki.klotter.builder
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.skia.Font
+import org.jetbrains.skia.Paint
 import org.jetbrains.skia.Typeface
 
 
 class PlotAxisBuilder {
 	var gridRows: Boolean = true
+	var gridColor: Int = Color.White.copy(alpha = 0.2f).toArgb()
 	var gridColumns: Boolean = true
 	var gridColumnGap: Float = 24.dp.value
-	var gridColumnRowAlpha: Float = 0.2f
 	var gridNumbersEnabled: Boolean = true
-	var gridNumbersSize: HorizontalSide = HorizontalSide.Right
+	var gridNumbersSize: HorizontalSide = HorizontalSide.Left
 	var gridNumbersFontSize: Float = 24.sp.value
 	var gridNumbersTypeface: Typeface = Typeface.makeDefault()
 
@@ -22,13 +26,13 @@ class PlotAxisBuilder {
 		return this
 	}
 
-	fun gridAlpha(alpha: Float): PlotAxisBuilder {
-		gridColumnRowAlpha = alpha
+	fun gridRows(enabled: Boolean): PlotAxisBuilder {
+		gridRows = enabled
 		return this
 	}
 
-	fun gridRows(enabled: Boolean): PlotAxisBuilder {
-		gridRows = enabled
+	fun gridColor(color: Int): PlotAxisBuilder {
+		gridColor = color
 		return this
 	}
 
@@ -75,9 +79,9 @@ class PlotAxisBuilder {
 	fun build(): PlotAxisData {
 		return PlotAxisData(
 			gridRows,
+			gridColor,
 			gridColumns,
 			gridColumnGap,
-			gridColumnRowAlpha,
 			gridNumbersEnabled,
 			gridNumbersSize,
 			gridNumbersFontSize,
@@ -88,11 +92,11 @@ class PlotAxisBuilder {
 
 class PlotAxisData(
 	val gridRows: Boolean,
+	val gridColorInt: Int,
 	val gridColumns: Boolean,
 	val gridColumnGap: Float,
-	val gridColumnRowAlpha: Float,
 	val gridNumbers: Boolean,
-	val gridNumbersSize: HorizontalSide,
+	val gridNumbersSide: HorizontalSide,
 	val gridNumbersFontSize: Float,
 	val gridNumbersTypeface: Typeface,
 ) {
@@ -100,5 +104,11 @@ class PlotAxisData(
 		fun default(): PlotAxisData {
 			return PlotAxisBuilder().build()
 		}
+	}
+
+	val font = Font(gridNumbersTypeface, gridNumbersFontSize)
+	val gridColor = Color(gridColorInt)
+	val gridPaint = Paint().also {
+		it.color = gridColorInt
 	}
 }

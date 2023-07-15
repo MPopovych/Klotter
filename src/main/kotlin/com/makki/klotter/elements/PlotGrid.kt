@@ -1,9 +1,16 @@
 package com.makki.klotter.elements
 
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.unit.dp
+import com.makki.klotter.builder.HorizontalSide
 import com.makki.klotter.builder.PlotAxisData
+import com.makki.klotter.builder.VerticalSide
+import com.makki.klotter.utils.TextMeasureUtils
+import java.math.RoundingMode
 import kotlin.math.*
 
 
@@ -14,7 +21,7 @@ fun DrawScope.drawGrid(
 	startId: Int,
 ) {
 	drawColumns(axisData, c, dataCount, startId)
-	drawRows(axisData, c)
+	drawRowsAndNumbers(axisData, c)
 }
 
 private fun DrawScope.drawColumns(
@@ -33,10 +40,9 @@ private fun DrawScope.drawColumns(
 	while (process < c.plotRect.width && count <= realItemCount) {
 		if ((startId + count) % columnMultiplier == 0) {
 			drawLine(
-				Color.White,
+				axisData.gridColor,
 				Offset(c.plotRect.left + process, c.plotRect.top),
-				Offset(c.plotRect.left + process, c.plotRect.bottom),
-				alpha = axisData.gridColumnRowAlpha
+				Offset(c.plotRect.left + process, c.plotRect.bottom)
 			)
 		}
 		process += gridWidth
@@ -44,31 +50,66 @@ private fun DrawScope.drawColumns(
 	}
 }
 
-private fun DrawScope.drawRows(
+private fun DrawScope.drawRowsAndNumbers(
 	axisData: PlotAxisData,
 	c: DrawContext,
 ) {
-	if (!axisData.gridRows) return
-
 	val dataHeightSafe = if (c.dataHeight == 0f) 1f else c.dataHeight
 
 	val pair = findClosestPower(dataHeightSafe)
 	val topBound = c.plotRect.top
 	val botBound = topBound + c.plotRect.height
 	val power = pair.first
-	var highestPoint = ceil(c.highestDataPoint / power).roundToInt() * power
-	val lowestPoint = c.highestDataPoint - c.dataHeight
+	val decimal = pair.second
+	var highestPoint = (ceil(c.highestDataPoint / power).roundToInt() * power).round(decimal)
+
+	val lowestPoint = (c.highestDataPoint - c.dataHeight).round(decimal)
 	val leftPoint = c.plotRect.left + c.leftOffset - 1f
 	while (highestPoint >= lowestPoint) {
-		val y = min(max(c.getYForData(highestPoint), topBound), botBound)
-		drawLine(
-			Color.White,
-			Offset(leftPoint, y),
-			Offset(leftPoint + c.plotRect.width, y),
-			alpha = axisData.gridColumnRowAlpha
-		)
-		highestPoint -= power
+		val pureY = c.getYForData(highestPoint)
+		val y = min(max(pureY, topBound), botBound)
+		if (axisData.gridRows) {
+			drawLine(
+				axisData.gridColor,
+				Offset(leftPoint, y),
+				Offset(leftPoint + c.plotRect.width, y),
+			)
+		}
+		if (axisData.gridNumbers && pureY in (topBound .. botBound)) {
+			drawNumber(highestPoint, y, axisData, c)
+		}
+		highestPoint = (highestPoint - power).round(decimal)
 	}
+}
+
+fun DrawScope.drawNumber(
+	number: Float,
+	y: Float?,
+	axisData: PlotAxisData,
+	c: DrawContext
+) {
+	val ySafe = y ?: c.getYForData(number)
+	val text = "$number"
+	val measure = TextMeasureUtils.textRect(text, axisData.font, axisData.gridPaint)
+	val x = when(axisData.gridNumbersSide) {
+		HorizontalSide.Left -> c.leftPaddingRect.right - measure.width - 15f
+		HorizontalSide.Center -> c.leftPaddingRect.right + c.plotRect.width / 2 - measure.width / 2
+		HorizontalSide.Right -> c.rightPaddingRect.left
+	}
+
+	drawIntoCanvas {// sub to updates
+		it.nativeCanvas.drawString(
+			text,
+			x,
+			ySafe,
+			axisData.font,
+			axisData.gridPaint
+		)
+	}
+}
+
+private fun Float.round(precision: Int): Float {
+	return this.toBigDecimal().setScale(precision, RoundingMode.HALF_EVEN).toFloat()
 }
 
 private fun findClosestPower(number: Float): Pair<Float, Int> {

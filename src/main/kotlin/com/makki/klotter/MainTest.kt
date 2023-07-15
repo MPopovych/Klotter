@@ -7,10 +7,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.application
+import com.makki.klotter.builder.*
 import com.makki.klotter.elements.Plot
-import com.makki.klotter.builder.PlotDataBuilder
-import com.makki.klotter.builder.PlotNavBuilder
-import com.makki.klotter.builder.PlotTitleBuilder
 import com.makki.klotter.handlers.models.KLineDrawing
 import com.makki.klotter.utils.SimpleWindow
 import kotlin.random.Random

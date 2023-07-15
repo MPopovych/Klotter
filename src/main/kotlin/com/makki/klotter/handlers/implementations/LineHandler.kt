@@ -35,10 +35,11 @@ class LineHandler(
 		val p = Path()
 		var lastX = 0f
 		var lastY = 0f
-		if (zip.isNotEmpty()) {
-			val f = zip.first()
-			lastX = f.first
-			lastY = f.second ?: 0f
+
+		val firstPresent = zip.firstOrNull { it.second != null }
+		if (firstPresent != null) {
+			lastX = firstPresent.first
+			lastY = firstPresent.second ?: 0f
 		}
 		p.moveTo(lastX, lastY)
 		var preDeltaX = 0f
@@ -48,7 +49,7 @@ class LineHandler(
 			y ?: continue
 			val (nextX, nextY) = zip.getOrNull(i + 1) ?: zip[i]
 			nextY ?: continue
-			if (smooth) {
+			if (smooth && !context.fastMode) {
 				val gradient = gradient(nextX, nextY, x, y)
 				val deltaX = (nextX - x) * -0.3f
 				val deltaY = deltaX * gradient * 0.4f
@@ -70,7 +71,7 @@ class LineHandler(
 		context.canvas.drawPath(
 			p, nativeColor, style = Stroke(
 				width = strokeWidth,
-				pathEffect = effect
+				pathEffect = if (context.fastMode) null else effect
 			)
 		)
 	}

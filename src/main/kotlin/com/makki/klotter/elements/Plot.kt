@@ -15,13 +15,9 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipRect
-import androidx.compose.ui.unit.sp
 import com.makki.klotter.builder.PlotData
 import com.makki.klotter.builder.PlotNavigation
 import com.makki.klotter.utils.PlotDataUtils
-import org.jetbrains.skia.Font
-import org.jetbrains.skia.Paint
-import org.jetbrains.skia.Typeface
 import kotlin.math.*
 
 
@@ -35,11 +31,6 @@ fun Plot(
 	var hZoom by remember { plotNavigation.horizontalZoom }
 	var vZoom by remember { plotNavigation.verticalZoom }
 
-	val font = Font(Typeface.makeDefault(), 24.sp.value)
-	val fontPaint = Paint().also {
-		it.color = 0xFF_FF_FF_00.toInt()
-	}
-
 	val pR = 0.09f // 7.5% * 2 ~ 15%
 	val defaultVisibility = plotNavigation.visible
 	var lastItemWidth = 1f
@@ -50,9 +41,9 @@ fun Plot(
 		onDraw = {
 			clipRect {
 				val plotRect = getPlotRect(pR)
-				val paddingRect = Rect(getLeftPadding(pR), getTopPadding(pR), getRightPadding(pR), getBotPadding(pR))
-				val localWidth = size.width - paddingRect.left - paddingRect.right
-				val localHeight = size.height - paddingRect.top - paddingRect.bottom
+				val axisRect = Rect(getLeftPadding(pR), getTopPadding(pR), getRightPadding(pR), getBotPadding(pR))
+				val localWidth = plotRect.width
+				val localHeight = plotRect.height
 
 				var hZoomCoeff = 1f + abs(hZoom) / localWidth
 				if (hZoom < 0) {
@@ -89,6 +80,7 @@ fun Plot(
 				val drawContext = DrawContext(
 					this,
 					plotRect,
+					axisRect,
 					dataHeightWZoom,
 					dataTopWZoom,
 					leftOffset,

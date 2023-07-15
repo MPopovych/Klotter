@@ -22,6 +22,14 @@ class RowData<T>(
 		handler.draw(context, getCachedForRange(range))
 	}
 
+	fun topForId(index: Int): Float? {
+		return handler.topFocus(cachedData?.get(index) ?: return null)
+	}
+
+	fun botForId(index: Int): Float? {
+		return handler.botFocus(cachedData?.get(index) ?: return null)
+	}
+
 	fun topForIds(ids: IntRange): Float? {
 		return getCachedForRange(ids).mapNotNull { it }.maxOfOrNull { handler.topFocus(it) }
 	}

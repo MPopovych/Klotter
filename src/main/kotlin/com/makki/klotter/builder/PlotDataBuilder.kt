@@ -3,6 +3,7 @@ package com.makki.klotter.builder
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
+import com.makki.klotter.elements.PlotDataCache
 import com.makki.klotter.handlers.implementations.DotHandler
 import com.makki.klotter.handlers.implementations.KLineHandler
 import com.makki.klotter.handlers.implementations.LineHandler
@@ -15,6 +16,12 @@ class PlotDataBuilder(private val ids: Collection<String>) {
 	private var axisData = PlotAxisData.default()
 	private var titleData = PlotTitleData.default()
 	private var title: String? = null
+	private var useCache: Boolean = true
+
+	fun caching(enabled: Boolean): PlotDataBuilder {
+		useCache = enabled
+		return this
+	}
 
 	fun title(text: String?): PlotDataBuilder {
 		title = text
@@ -91,6 +98,7 @@ class PlotDataBuilder(private val ids: Collection<String>) {
 			axisData = axisData,
 			titleData = titleData,
 			title = title,
+			useCache = useCache,
 		)
 	}
 }
@@ -101,19 +109,23 @@ class PlotData(
 	val meta: Map<String, MetaData>,
 	val axisData: PlotAxisData,
 	val titleData: PlotTitleData,
-	val title: String?
+	val title: String?,
+	useCache: Boolean
 ) {
 	val idList = ids.toList()
+	val plotDataCache: PlotDataCache?
+
+	init {
+		cacheRowValues()
+		plotDataCache = if (useCache) PlotDataCache(this) else null
+	}
+
 	fun count() = idList.size
 
-	private fun onDataProcessed() {
+	private fun cacheRowValues() {
 		for (r in rows.values) {
 			r.bakeCache(idList)
 		}
-	}
-
-	init {
-		onDataProcessed()
 	}
 }
 
