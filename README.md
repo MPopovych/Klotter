@@ -17,10 +17,10 @@ This is a library for personal use, feel free to peek into the code or to collab
 - Grid background
 - Multiple plots with shared navigation
 - Partial rendering - calculates what can be seen on screen before fetching the data
+- Displaying prices of last visible kline / line
+- Grid with prices
 
 ## Plans
 
-- Displaying prices of last visible kline / line
-- Grid with prices
 - Hover element
 - Callbacks and data updates
