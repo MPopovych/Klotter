@@ -92,7 +92,7 @@ fun DrawScope.drawNumber(
 	val text = "$number"
 	val measure = TextMeasureUtils.textRect(text, axisData.font, axisData.gridPaint)
 	val x = when(axisData.gridNumbersSide) {
-		HorizontalSide.Left -> c.leftPaddingRect.right - measure.width - 15f
+		HorizontalSide.Left -> c.leftPaddingRect.right - measure.width - c.itemWidth
 		HorizontalSide.Center -> c.leftPaddingRect.right + c.plotRect.width / 2 - measure.width / 2
 		HorizontalSide.Right -> c.rightPaddingRect.left
 	}
