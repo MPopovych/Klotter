@@ -28,6 +28,10 @@ class LineHandler(
 		return data.toFloat()
 	}
 
+	override fun trackerValue(data: Number): Float {
+		return data.toFloat()
+	}
+
 	override fun draw(context: DrawContext, scopeT: List<Number?>) {
 		val xList = List(scopeT.size) { index -> context.getRecForIndex(index).center.x }
 		val yList = scopeT.map { number -> context.getYForData(number?.toFloat() ?: return@map null) }

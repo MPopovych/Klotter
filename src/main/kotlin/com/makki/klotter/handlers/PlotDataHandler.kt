@@ -7,4 +7,5 @@ interface PlotDataHandler<T> {
 
 	fun topFocus(data: T): Float
 	fun botFocus(data: T): Float
+	fun trackerValue(data: T): Float?
 }

@@ -27,6 +27,10 @@ class KLineHandler(
 		return data.low.toFloat()
 	}
 
+	override fun trackerValue(data: KLineDrawing): Float {
+		return data.close.toFloat()
+	}
+
 	override fun draw(context: DrawContext, scopeT: List<KLineDrawing?>) {
 		val rectList = List(scopeT.size) { index -> context.getRecForIndex(index) }
 

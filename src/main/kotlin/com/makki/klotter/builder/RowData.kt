@@ -22,12 +22,16 @@ class RowData<T>(
 		handler.draw(context, getCachedForRange(range))
 	}
 
+	fun trackForId(index: Int): Float? {
+		return handler.trackerValue(cachedData?.getOrNull(index) ?: return null)
+	}
+
 	fun topForId(index: Int): Float? {
-		return handler.topFocus(cachedData?.get(index) ?: return null)
+		return handler.topFocus(cachedData?.getOrNull(index) ?: return null)
 	}
 
 	fun botForId(index: Int): Float? {
-		return handler.botFocus(cachedData?.get(index) ?: return null)
+		return handler.botFocus(cachedData?.getOrNull(index) ?: return null)
 	}
 
 	fun topForIds(ids: IntRange): Float? {

@@ -14,6 +14,10 @@ class DotHandler(private val radius: Float, private val color: Color) : PlotData
 		return data.toFloat()
 	}
 
+	override fun trackerValue(data: Number): Float {
+		return data.toFloat()
+	}
+
 	override fun draw(context: DrawContext, scopeT: List<Number?>) {
 		scopeT.forEachIndexed { i, n ->
 			n ?: return@forEachIndexed

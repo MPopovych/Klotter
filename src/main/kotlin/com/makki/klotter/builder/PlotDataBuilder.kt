@@ -14,6 +14,7 @@ class PlotDataBuilder(private val ids: Collection<String>) {
 	private val meta = LinkedHashMap<String, MetaData>()
 	private val data = LinkedHashMap<String, RowData<*>>()
 	private var axisData = PlotAxisData.default()
+	private var trackData = PlotLineTrackData.default()
 	private var titleData = PlotTitleData.default()
 	private var title: String? = null
 	private var useCache: Boolean = true
@@ -30,6 +31,11 @@ class PlotDataBuilder(private val ids: Collection<String>) {
 
 	fun titleData(data: PlotTitleData): PlotDataBuilder {
 		titleData = data
+		return this
+	}
+
+	fun trackData(data: PlotLineTrackData): PlotDataBuilder {
+		trackData = data
 		return this
 	}
 
@@ -96,6 +102,7 @@ class PlotDataBuilder(private val ids: Collection<String>) {
 			rows = LinkedHashMap(data),
 			meta = LinkedHashMap(meta),
 			axisData = axisData,
+			trackData = trackData,
 			titleData = titleData,
 			title = title,
 			useCache = useCache,
@@ -108,6 +115,7 @@ class PlotData(
 	val rows: Map<String, RowData<*>>,
 	val meta: Map<String, MetaData>,
 	val axisData: PlotAxisData,
+	val trackData: PlotLineTrackData,
 	val titleData: PlotTitleData,
 	val title: String?,
 	useCache: Boolean

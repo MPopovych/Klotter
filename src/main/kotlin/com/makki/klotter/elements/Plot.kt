@@ -89,7 +89,9 @@ fun Plot(
 				val lastValidCount = min(plotData.count(), endId)
 				val lastValidStart = min(lastValidCount, startId)
 				val realItemCount = max(min(visibleRange.count(), lastValidCount - lastValidStart), 0)
+
 				drawGrid(plotData.axisData, drawContext, realItemCount, startId)
+				drawTracks(plotData, drawContext, lastValidCount - 1)
 
 				plotData.rows.values.forEach { u ->
 					u.drawFastForIds(drawContext, IntRange(startId, endId))
