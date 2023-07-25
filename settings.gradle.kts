@@ -1,3 +1,5 @@
+rootProject.name = "Klotter"
+
 pluginManagement {
     repositories {
         google()
@@ -13,5 +15,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "Klotter"
 

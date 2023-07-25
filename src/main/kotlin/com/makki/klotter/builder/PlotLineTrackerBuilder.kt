@@ -16,7 +16,7 @@ class PlotLineTrackerBuilder {
 		textColor: Color = Color.White,
 		textSize: Float = 24.sp.value,
 		backgroundColor: Color = Color(227, 85, 97),
-		side: HorizontalSide = HorizontalSide.Right
+		side: HorizontalSide = HorizontalSide.Right,
 	): PlotLineTrackerBuilder {
 		tracks[name] = PlotTrackMeta(name, textColor, textSize, backgroundColor, side)
 		return this
@@ -43,11 +43,13 @@ class PlotTrackMeta(
 }
 
 class PlotLineTrackData(
-	val tracks: HashMap<String, PlotTrackMeta>
+	val tracks: HashMap<String, PlotTrackMeta>,
 ) {
 	companion object {
 		fun default(): PlotLineTrackData {
 			return PlotLineTrackerBuilder().build()
 		}
+
+		fun builder() = PlotLineTrackerBuilder()
 	}
 }
