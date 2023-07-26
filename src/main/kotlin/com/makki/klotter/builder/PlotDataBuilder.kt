@@ -7,6 +7,8 @@ import com.makki.klotter.elements.PlotDataCache
 import com.makki.klotter.handlers.implementations.DotHandler
 import com.makki.klotter.handlers.implementations.KLineHandler
 import com.makki.klotter.handlers.implementations.LineHandler
+import com.makki.klotter.handlers.implementations.MultiDotHandler
+import com.makki.klotter.handlers.models.DotDrawing
 import com.makki.klotter.handlers.models.KLineDrawing
 
 
@@ -83,6 +85,16 @@ class PlotDataBuilder(private val ids: Collection<String>) {
 	): PlotDataBuilder {
 		val cast = if (values is HashMap) values else HashMap(values)
 		val rowData = RowData(DotHandler(radius, color), cast)
+		return addRowData(name, rowData, MetaData(focus))
+	}
+
+	fun addPointData(
+		name: String,
+		values: Map<String, List<DotDrawing>>,
+		focus: Boolean = true,
+	): PlotDataBuilder {
+		val cast = if (values is HashMap) values else HashMap(values)
+		val rowData = RowData(MultiDotHandler(), cast)
 		return addRowData(name, rowData, MetaData(focus))
 	}
 

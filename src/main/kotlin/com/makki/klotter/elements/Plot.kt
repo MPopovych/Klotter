@@ -64,8 +64,12 @@ fun Plot(
 
 				val visibleRange = IntRange(startId, endId)
 
-				val dataTop = PlotDataUtils.getTopOfVisibleValue(visibleRange, plotData) ?: 1f
-				val dataBot = PlotDataUtils.getBotOfVisibleValue(visibleRange, plotData) ?: -1f
+				var dataTop = PlotDataUtils.getTopOfVisibleValue(visibleRange, plotData) ?: 1f
+				var dataBot = PlotDataUtils.getBotOfVisibleValue(visibleRange, plotData) ?: -1f
+				if (dataTop - dataBot == 0.0f) {
+					dataTop *= 1.05f
+					dataBot /= 1.05f
+				}
 				val mid = (dataTop + dataBot) / 2f
 				val dataHeightWZoom = (dataTop - dataBot) * vZoomCoeff
 				val dataTopWZoom = mid + dataHeightWZoom / 2f
