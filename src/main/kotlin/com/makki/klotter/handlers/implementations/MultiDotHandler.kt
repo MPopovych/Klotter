@@ -8,14 +8,15 @@ import com.makki.klotter.handlers.models.DotDrawing
 
 class MultiDotHandler : PlotDataHandler<List<DotDrawing>> {
 	override fun topFocus(data: List<DotDrawing>): Float {
-		return data.maxBy { it.value.toFloat() }.value.toFloat()
+		return data.maxByOrNull { it.value.toFloat() }?.value?.toFloat() ?: 1f
 	}
 
 	override fun botFocus(data: List<DotDrawing>): Float {
-		return data.minBy { it.value.toFloat() }.value.toFloat()
+		return data.minByOrNull { it.value.toFloat() }?.value?.toFloat() ?: -1f
 	}
 
 	override fun trackerValue(data: List<DotDrawing>): Float {
+		if (data.isEmpty()) return 0f
 		return data.map { it.value.toFloat() }.average().toFloat()
 	}
 

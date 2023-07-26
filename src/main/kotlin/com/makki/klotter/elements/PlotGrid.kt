@@ -33,6 +33,7 @@ private fun DrawScope.drawColumns(
 	if (!axisData.gridColumns) return
 
 	val gridWidth = c.plotRect.width / max(c.canFit, 1f)
+	if (gridWidth.isNaN()) throw IllegalStateException()
 	val columnMultiplier = ceil(axisData.gridColumnGap / gridWidth).roundToInt()
 
 	var process = c.leftOffset - 1f
@@ -61,6 +62,7 @@ private fun DrawScope.drawRowsAndNumbers(
 	val botBound = topBound + c.plotRect.height
 	val power = pair.first
 	val decimal = pair.second
+	if (power.isNaN()) throw IllegalStateException()
 	var highestPoint = (ceil(c.highestDataPoint / power).roundToInt() * power).round(decimal)
 
 	val lowestPoint = (c.highestDataPoint - c.dataHeight).round(decimal)
