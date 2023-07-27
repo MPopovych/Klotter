@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.drawscope.clipRect
 import com.makki.klotter.builder.PlotData
 import com.makki.klotter.builder.PlotNavigation
 import com.makki.klotter.utils.PlotDataUtils
+import com.makki.klotter.utils.isNanDebug
 import kotlin.math.*
 
 
@@ -72,7 +73,7 @@ fun Plot(
 					dataBot /= 1.05f
 				}
 				val mid = (dataTop + dataBot) / 2f
-				if (mid.isNaN()) throw IllegalStateException()
+				if (mid.isNanDebug()) throw IllegalStateException()
 				val dataHeightWZoom = (dataTop - dataBot) * vZoomCoeff
 				val dataTopWZoom = mid + dataHeightWZoom / 2f
 
@@ -82,7 +83,7 @@ fun Plot(
 				} else if (itemOffset < 0) {
 					leftOffset = -itemOffset * itemWidth
 				}
-				if (leftOffset.isNaN()) throw IllegalStateException()
+				if (leftOffset.isNanDebug()) throw IllegalStateException()
 
 				val drawContext = DrawContext(
 					this,

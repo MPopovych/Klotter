@@ -10,6 +10,7 @@ import com.makki.klotter.builder.HorizontalSide
 import com.makki.klotter.builder.PlotAxisData
 import com.makki.klotter.builder.VerticalSide
 import com.makki.klotter.utils.TextMeasureUtils
+import com.makki.klotter.utils.isNanDebug
 import java.math.RoundingMode
 import kotlin.math.*
 
@@ -33,7 +34,7 @@ private fun DrawScope.drawColumns(
 	if (!axisData.gridColumns) return
 
 	val gridWidth = c.plotRect.width / max(c.canFit, 1f)
-	if (gridWidth.isNaN()) throw IllegalStateException()
+	if (gridWidth.isNanDebug()) throw IllegalStateException()
 	val columnMultiplier = ceil(axisData.gridColumnGap / gridWidth).roundToInt()
 
 	var process = c.leftOffset - 1f
@@ -62,12 +63,14 @@ private fun DrawScope.drawRowsAndNumbers(
 	val botBound = topBound + c.plotRect.height
 	val power = pair.first
 	val decimal = pair.second
-	if (power.isNaN()) throw IllegalStateException()
+	if (power.isNanDebug() || power == 0f) return
 	var highestPoint = (ceil(c.highestDataPoint / power).roundToInt() * power).round(decimal)
 
 	val lowestPoint = (c.highestDataPoint - c.dataHeight).round(decimal)
 	val leftPoint = c.plotRect.left + c.leftOffset - 1f
-	while (highestPoint >= lowestPoint) {
+	var iter = 0
+	while (highestPoint >= lowestPoint && iter < 30) {
+		iter++
 		val pureY = c.getYForData(highestPoint)
 		val y = min(max(pureY, topBound), botBound)
 		if (axisData.gridRows) {
@@ -117,7 +120,7 @@ private fun Float.round(precision: Int): Float {
 private fun findClosestPower(number: Float): Pair<Float, Int> {
 	var start = 100000000.0f
 	var decimal = -8
-	while (number < start) {
+	while (number < start && decimal < 10) {
 		start /= 10
 		decimal++
 	}
