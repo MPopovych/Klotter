@@ -80,7 +80,7 @@ private fun DrawScope.drawRowsAndNumbers(
 				Offset(leftPoint + c.plotRect.width, y),
 			)
 		}
-		if (axisData.gridNumbers && pureY in (topBound .. botBound)) {
+		if (axisData.gridNumbers && pureY in (topBound..botBound)) {
 			drawNumber(highestPoint, y, axisData, c)
 		}
 		highestPoint = (highestPoint - power).round(decimal)
@@ -91,12 +91,12 @@ fun DrawScope.drawNumber(
 	number: Float,
 	y: Float?,
 	axisData: PlotAxisData,
-	c: DrawContext
+	c: DrawContext,
 ) {
 	val ySafe = y ?: c.getYForData(number)
 	val text = "$number"
 	val measure = TextMeasureUtils.textRect(text, axisData.font, axisData.gridPaint)
-	val x = when(axisData.gridNumbersSide) {
+	val x = when (axisData.gridNumbersSide) {
 		HorizontalSide.Left -> c.leftPaddingRect.right - measure.width - c.itemWidth
 		HorizontalSide.Center -> c.leftPaddingRect.right + c.plotRect.width / 2 - measure.width / 2
 		HorizontalSide.Right -> c.rightPaddingRect.left

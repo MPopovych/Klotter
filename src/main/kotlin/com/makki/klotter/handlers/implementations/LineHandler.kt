@@ -11,7 +11,7 @@ class LineHandler(
 	private val strokeWidth: Float,
 	color: Int,
 	stroke: Boolean = false,
-	private val smooth: Boolean = false
+	private val smooth: Boolean = false,
 ) : PlotDataHandler<Number> {
 	private val nativeColor = Color(color)
 	private val effect: PathEffect? = if (stroke) {

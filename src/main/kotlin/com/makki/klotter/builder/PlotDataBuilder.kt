@@ -130,7 +130,7 @@ class PlotData(
 	val trackData: PlotLineTrackData,
 	val titleData: PlotTitleData,
 	val title: String?,
-	useCache: Boolean
+	useCache: Boolean,
 ) {
 	val idList = ids.toList()
 	val plotDataCache: PlotDataCache?

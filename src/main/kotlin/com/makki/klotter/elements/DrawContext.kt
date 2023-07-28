@@ -18,6 +18,7 @@ class DrawContext(
 	init {
 		if (dataHeight.isNanDebug()) throw IllegalStateException()
 	}
+
 	val itemWidth = plotRect.width / max(canFit, 1f)
 	val leftPaddingRect = Rect(0f, axisRect.top, axisRect.left, axisRect.bottom)
 	val rightPaddingRect = Rect(plotRect.right, axisRect.top, plotRect.right + axisRect.right, axisRect.bottom)

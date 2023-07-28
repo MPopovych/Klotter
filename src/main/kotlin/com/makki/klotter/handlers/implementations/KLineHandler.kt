@@ -13,7 +13,7 @@ import kotlin.math.min
 
 class KLineHandler(
 	dropColor: Int = Color(227, 85, 97).toArgb(),
-	raiseColor: Int = Color(93, 200, 153).toArgb()
+	raiseColor: Int = Color(93, 200, 153).toArgb(),
 ) : PlotDataHandler<KLineDrawing> {
 
 	private val dropColor: Color = Color(dropColor)

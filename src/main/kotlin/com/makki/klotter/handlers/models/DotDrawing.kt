@@ -6,5 +6,5 @@ import androidx.compose.ui.unit.dp
 data class DotDrawing(
 	val value: Number,
 	val color: Color,
-	val radius: Float = 5.dp.value
+	val radius: Float = 5.dp.value,
 )
