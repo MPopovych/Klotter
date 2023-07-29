@@ -87,6 +87,7 @@ fun Plot(
 
 				val drawContext = DrawContext(
 					this,
+					plotData.idList,
 					plotRect,
 					axisRect,
 					dataHeightWZoom,
@@ -95,10 +96,10 @@ fun Plot(
 					visibleItemsZoomed
 				)
 				val lastValidCount = min(plotData.count(), endId)
-				val lastValidStart = min(lastValidCount, startId)
-				val realItemCount = max(min(visibleRange.count(), lastValidCount - lastValidStart), 0)
+//				val lastValidStart = min(lastValidCount, startId)
+//				val realItemCount = max(min(visibleRange.count(), lastValidCount - lastValidStart), 0)
 
-				drawGrid(plotData.axisData, drawContext, realItemCount, startId)
+				drawGrid(plotData.axisData, drawContext, startId, endId, lastValidCount)
 				drawTracks(plotData, drawContext, lastValidCount - 1)
 
 				plotData.rows.values.forEach { u ->

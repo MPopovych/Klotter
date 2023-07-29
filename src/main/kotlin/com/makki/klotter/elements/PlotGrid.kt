@@ -1,53 +1,70 @@
 package com.makki.klotter.elements
 
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.unit.dp
 import com.makki.klotter.builder.HorizontalSide
 import com.makki.klotter.builder.PlotAxisData
-import com.makki.klotter.builder.VerticalSide
 import com.makki.klotter.utils.TextMeasureUtils
 import com.makki.klotter.utils.isNanDebug
 import java.math.RoundingMode
-import kotlin.math.*
+import kotlin.math.ceil
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 
 fun DrawScope.drawGrid(
 	axisData: PlotAxisData,
 	c: DrawContext,
-	dataCount: Int,
 	startId: Int,
+	endId: Int,
+	realEndId: Int,
 ) {
-	drawColumns(axisData, c, dataCount, startId)
+	drawColumns(axisData, c, startId, endId, realEndId)
 	drawRowsAndNumbers(axisData, c)
 }
 
 private fun DrawScope.drawColumns(
 	axisData: PlotAxisData,
 	c: DrawContext,
-	realItemCount: Int,
 	startId: Int,
+	endId: Int,
+	realEndId: Int,
 ) {
-	if (!axisData.gridColumns) return
+	if (!axisData.gridColumns && !axisData.gridLabels) return
 
 	val gridWidth = c.plotRect.width / max(c.canFit, 1f)
 	if (gridWidth.isNanDebug()) throw IllegalStateException()
 	val columnMultiplier = ceil(axisData.gridColumnGap / gridWidth).roundToInt()
 
-	var process = c.leftOffset - 1f
 	var count = 0
-	while (process < c.plotRect.width && count <= realItemCount) {
-		if ((startId + count) % columnMultiplier == 0) {
-			drawLine(
-				axisData.gridColor,
-				Offset(c.plotRect.left + process, c.plotRect.top),
-				Offset(c.plotRect.left + process, c.plotRect.bottom)
-			)
+	var lastLabelBorder = 0f
+	val reduced = max(0, -startId)
+	while (startId + count + reduced <= realEndId) {
+		val current = startId + count
+		if ((current + reduced) % columnMultiplier == 0 && count >= 0) {
+			val x = c.getRecForIndex(count).left - 1f
+			if (axisData.gridColumns) {
+				drawLine(
+					axisData.gridColor,
+					Offset(x, c.plotRect.top),
+					Offset(x, c.plotRect.bottom)
+				)
+			}
+			if (axisData.gridLabels && x > lastLabelBorder + 3f) {
+				c.ids.getOrNull(current + reduced)?.also {
+					lastLabelBorder = drawId(
+						it,
+						current,
+						x,
+						axisData,
+						c
+					)
+				}
+			}
 		}
-		process += gridWidth
 		count++
 	}
 }
@@ -111,6 +128,32 @@ fun DrawScope.drawNumber(
 			axisData.gridPaint
 		)
 	}
+}
+
+/**
+ * @return right border of label
+ */
+fun DrawScope.drawId(
+	id: String,
+	relativeIndex: Int,
+	x: Float,
+	axisData: PlotAxisData,
+	c: DrawContext,
+): Float {
+	val text = axisData.gridLabelMap(id, relativeIndex)
+	val measure = TextMeasureUtils.textRect(text, axisData.font, axisData.gridPaint)
+	val y = c.axisRect.top + c.plotRect.height
+
+	drawIntoCanvas {// sub to updates
+		it.nativeCanvas.drawString(
+			text,
+			x,
+			y + measure.height,
+			axisData.font,
+			axisData.gridPaint
+		)
+	}
+	return x + measure.width
 }
 
 private fun Float.round(precision: Int): Float {

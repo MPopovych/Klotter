@@ -7,6 +7,7 @@ import kotlin.math.max
 
 class DrawContext(
 	val canvas: DrawScope,
+	val ids: List<String>,
 	val plotRect: Rect,
 	val axisRect: Rect,
 	val dataHeight: Float,
