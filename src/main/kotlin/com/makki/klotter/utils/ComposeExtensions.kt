@@ -1,7 +1,7 @@
 package com.makki.klotter.utils
 
 fun Float.isNanDebug(): Boolean {
-	if (this.isNaN()) {
+	if (!this.isFinite()) {
 		stacktraceHere()
 		return true
 	}
