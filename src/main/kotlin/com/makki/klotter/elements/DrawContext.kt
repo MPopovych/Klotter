@@ -2,10 +2,12 @@ package com.makki.klotter.elements
 
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import com.makki.klotter.utils.isNanDebug
 import kotlin.math.max
 
 class DrawContext(
 	val canvas: DrawScope,
+	val ids: List<String>,
 	val plotRect: Rect,
 	val axisRect: Rect,
 	val dataHeight: Float,
@@ -13,6 +15,10 @@ class DrawContext(
 	val leftOffset: Float,
 	val canFit: Float,
 ) {
+
+	init {
+		if (dataHeight.isNanDebug()) throw IllegalStateException()
+	}
 
 	val itemWidth = plotRect.width / max(canFit, 1f)
 	val leftPaddingRect = Rect(0f, axisRect.top, axisRect.left, axisRect.bottom)

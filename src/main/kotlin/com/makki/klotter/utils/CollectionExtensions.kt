@@ -3,6 +3,11 @@ package com.makki.klotter.utils
 import kotlin.math.max
 import kotlin.math.min
 
+fun <T> List<T>.splitInto(n: Int): List<List<T>> {
+	return this.withIndex().groupBy {
+		it.index % n
+	}.map { grouped -> grouped.value.map { indexed -> indexed.value } }
+}
 
 fun <T> List<T>.safeSub(from: Int, to: Int): List<T> {
 	val safeFrom = max(min(this.size, from), 0)

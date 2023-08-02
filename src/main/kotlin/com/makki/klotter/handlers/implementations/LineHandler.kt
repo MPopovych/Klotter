@@ -11,7 +11,7 @@ class LineHandler(
 	private val strokeWidth: Float,
 	color: Int,
 	stroke: Boolean = false,
-	private val smooth: Boolean = false
+	private val smooth: Boolean = false,
 ) : PlotDataHandler<Number> {
 	private val nativeColor = Color(color)
 	private val effect: PathEffect? = if (stroke) {
@@ -33,6 +33,8 @@ class LineHandler(
 	}
 
 	override fun draw(context: DrawContext, scopeT: List<Number?>) {
+		if (scopeT.isEmpty()) return
+
 		val xList = List(scopeT.size) { index -> context.getRecForIndex(index).center.x }
 		val yList = scopeT.map { number -> context.getYForData(number?.toFloat() ?: return@map null) }
 		val zip = xList.zip(yList)
@@ -71,6 +73,8 @@ class LineHandler(
 				p.lineTo(x, y)
 			}
 		}
+
+		if (p.isEmpty) return
 
 		context.canvas.drawPath(
 			p, nativeColor, style = Stroke(

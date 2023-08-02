@@ -7,7 +7,7 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
-object RandomColorPool {
+object ColorUtil {
 
 	private val cache = ConcurrentHashMap<String, Color>()
 
@@ -21,8 +21,6 @@ object RandomColorPool {
 		val alphaInt = (max(min(alpha, 1f), 0f) * 255).roundToInt()
 		return Color(Random.nextInt(256), Random.nextInt(256), Random.nextInt(256), alphaInt)
 	}
-
-
 
 
 }

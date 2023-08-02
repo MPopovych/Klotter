@@ -1,51 +1,70 @@
 package com.makki.klotter.elements
 
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.unit.dp
 import com.makki.klotter.builder.HorizontalSide
 import com.makki.klotter.builder.PlotAxisData
-import com.makki.klotter.builder.VerticalSide
 import com.makki.klotter.utils.TextMeasureUtils
+import com.makki.klotter.utils.isNanDebug
 import java.math.RoundingMode
-import kotlin.math.*
+import kotlin.math.ceil
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 
 fun DrawScope.drawGrid(
 	axisData: PlotAxisData,
 	c: DrawContext,
-	dataCount: Int,
 	startId: Int,
+	endId: Int,
+	realEndId: Int,
 ) {
-	drawColumns(axisData, c, dataCount, startId)
+	drawColumns(axisData, c, startId, endId, realEndId)
 	drawRowsAndNumbers(axisData, c)
 }
 
 private fun DrawScope.drawColumns(
 	axisData: PlotAxisData,
 	c: DrawContext,
-	realItemCount: Int,
 	startId: Int,
+	endId: Int,
+	realEndId: Int,
 ) {
-	if (!axisData.gridColumns) return
+	if (!axisData.gridColumns && !axisData.gridLabels) return
 
 	val gridWidth = c.plotRect.width / max(c.canFit, 1f)
+	if (gridWidth.isNanDebug()) throw IllegalStateException()
 	val columnMultiplier = ceil(axisData.gridColumnGap / gridWidth).roundToInt()
 
-	var process = c.leftOffset - 1f
 	var count = 0
-	while (process < c.plotRect.width && count <= realItemCount) {
-		if ((startId + count) % columnMultiplier == 0) {
-			drawLine(
-				axisData.gridColor,
-				Offset(c.plotRect.left + process, c.plotRect.top),
-				Offset(c.plotRect.left + process, c.plotRect.bottom)
-			)
+	var lastLabelBorder = 0f
+	val reduced = max(0, -startId)
+	while (startId + count + reduced <= realEndId) {
+		val current = startId + count
+		if ((current + reduced) % columnMultiplier == 0 && count >= 0) {
+			val x = c.getRecForIndex(count).left - 1f
+			if (axisData.gridColumns) {
+				drawLine(
+					axisData.gridColor,
+					Offset(x, c.plotRect.top),
+					Offset(x, c.plotRect.bottom)
+				)
+			}
+			if (axisData.gridLabels && x > lastLabelBorder + 3f) {
+				c.ids.getOrNull(current + reduced)?.also {
+					lastLabelBorder = drawId(
+						it,
+						current,
+						x,
+						axisData,
+						c
+					)
+				}
+			}
 		}
-		process += gridWidth
 		count++
 	}
 }
@@ -61,11 +80,14 @@ private fun DrawScope.drawRowsAndNumbers(
 	val botBound = topBound + c.plotRect.height
 	val power = pair.first
 	val decimal = pair.second
+	if (power.isNanDebug() || power == 0f) return
 	var highestPoint = (ceil(c.highestDataPoint / power).roundToInt() * power).round(decimal)
 
 	val lowestPoint = (c.highestDataPoint - c.dataHeight).round(decimal)
 	val leftPoint = c.plotRect.left + c.leftOffset - 1f
-	while (highestPoint >= lowestPoint) {
+	var iter = 0
+	while (highestPoint >= lowestPoint && iter < 30) {
+		iter++
 		val pureY = c.getYForData(highestPoint)
 		val y = min(max(pureY, topBound), botBound)
 		if (axisData.gridRows) {
@@ -75,7 +97,7 @@ private fun DrawScope.drawRowsAndNumbers(
 				Offset(leftPoint + c.plotRect.width, y),
 			)
 		}
-		if (axisData.gridNumbers && pureY in (topBound .. botBound)) {
+		if (axisData.gridNumbers && pureY in (topBound..botBound)) {
 			drawNumber(highestPoint, y, axisData, c)
 		}
 		highestPoint = (highestPoint - power).round(decimal)
@@ -86,12 +108,12 @@ fun DrawScope.drawNumber(
 	number: Float,
 	y: Float?,
 	axisData: PlotAxisData,
-	c: DrawContext
+	c: DrawContext,
 ) {
 	val ySafe = y ?: c.getYForData(number)
 	val text = "$number"
 	val measure = TextMeasureUtils.textRect(text, axisData.font, axisData.gridPaint)
-	val x = when(axisData.gridNumbersSide) {
+	val x = when (axisData.gridNumbersSide) {
 		HorizontalSide.Left -> c.leftPaddingRect.right - measure.width - c.itemWidth
 		HorizontalSide.Center -> c.leftPaddingRect.right + c.plotRect.width / 2 - measure.width / 2
 		HorizontalSide.Right -> c.rightPaddingRect.left
@@ -108,6 +130,32 @@ fun DrawScope.drawNumber(
 	}
 }
 
+/**
+ * @return right border of label
+ */
+fun DrawScope.drawId(
+	id: String,
+	relativeIndex: Int,
+	x: Float,
+	axisData: PlotAxisData,
+	c: DrawContext,
+): Float {
+	val text = axisData.gridLabelMap(id, relativeIndex)
+	val measure = TextMeasureUtils.textRect(text, axisData.font, axisData.gridPaint)
+	val y = c.axisRect.top + c.plotRect.height
+
+	drawIntoCanvas {// sub to updates
+		it.nativeCanvas.drawString(
+			text,
+			x,
+			y + measure.height,
+			axisData.font,
+			axisData.gridPaint
+		)
+	}
+	return x + measure.width
+}
+
 private fun Float.round(precision: Int): Float {
 	return this.toBigDecimal().setScale(precision, RoundingMode.HALF_EVEN).toFloat()
 }
@@ -115,7 +163,7 @@ private fun Float.round(precision: Int): Float {
 private fun findClosestPower(number: Float): Pair<Float, Int> {
 	var start = 100000000.0f
 	var decimal = -8
-	while (number < start) {
+	while (number < start && decimal < 10) {
 		start /= 10
 		decimal++
 	}

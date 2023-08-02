@@ -9,14 +9,19 @@ import androidx.compose.ui.window.WindowState
 import kotlin.system.exitProcess
 
 @Composable
-fun SimpleWindow(size: DpSize?, name: String = "Untitled", exit: (() -> Unit)? = null,  content: @Composable FrameWindowScope.() -> Unit) {
-    Window(
-        onCloseRequest = {
-            exit?.invoke() ?: exitProcess(0)
-        },
-        title = name,
-        state = WindowState(size = size ?: DpSize(600.dp, 300.dp)),
-    ) {
-        content()
-    }
+fun SimpleWindow(
+	size: DpSize?,
+	name: String = "Untitled",
+	exit: (() -> Unit)? = null,
+	content: @Composable FrameWindowScope.() -> Unit,
+) {
+	Window(
+		onCloseRequest = {
+			exit?.invoke() ?: exitProcess(0)
+		},
+		title = name,
+		state = WindowState(size = size ?: DpSize(600.dp, 300.dp)),
+	) {
+		content()
+	}
 }

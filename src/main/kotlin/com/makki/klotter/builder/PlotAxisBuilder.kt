@@ -10,14 +10,16 @@ import org.jetbrains.skia.Typeface
 
 
 class PlotAxisBuilder {
-	var gridRows: Boolean = true
-	var gridColor: Int = Color.White.copy(alpha = 0.2f).toArgb()
-	var gridColumns: Boolean = true
-	var gridColumnGap: Float = 24.dp.value
-	var gridNumbersEnabled: Boolean = true
-	var gridNumbersSize: HorizontalSide = HorizontalSide.Left
-	var gridNumbersFontSize: Float = 24.sp.value
-	var gridNumbersTypeface: Typeface = Typeface.makeDefault()
+	private var gridRows: Boolean = true
+	private var labels: Boolean = false
+	private var labelLambda: (String, Int) -> String = { s, _ -> s }
+	private var gridColor: Int = Color.White.copy(alpha = 0.2f).toArgb()
+	private var gridColumns: Boolean = true
+	private var gridColumnGap: Float = 24.dp.value
+	private var gridNumbersEnabled: Boolean = true
+	private var gridNumbersSize: HorizontalSide = HorizontalSide.Left
+	private var gridNumbersFontSize: Float = 24.sp.value
+	private var gridNumbersTypeface: Typeface = Typeface.makeDefault()
 
 	fun grid(enabled: Boolean): PlotAxisBuilder {
 		gridRows = enabled
@@ -29,6 +31,13 @@ class PlotAxisBuilder {
 	fun gridRows(enabled: Boolean): PlotAxisBuilder {
 		gridRows = enabled
 		return this
+	}
+
+	fun labels(enabled: Boolean) = this.also { labels = enabled }
+
+	fun gridIdMap(block: (String, Int) -> String) = this.also {
+		labelLambda = block
+		labels = true
 	}
 
 	fun gridColor(color: Int): PlotAxisBuilder {
@@ -79,6 +88,8 @@ class PlotAxisBuilder {
 	fun build(): PlotAxisData {
 		return PlotAxisData(
 			gridRows,
+			labels,
+			labelLambda,
 			gridColor,
 			gridColumns,
 			gridColumnGap,
@@ -92,6 +103,8 @@ class PlotAxisBuilder {
 
 class PlotAxisData(
 	val gridRows: Boolean,
+	val gridLabels: Boolean,
+	val gridLabelMap: (String, Int) -> String,
 	val gridColorInt: Int,
 	val gridColumns: Boolean,
 	val gridColumnGap: Float,

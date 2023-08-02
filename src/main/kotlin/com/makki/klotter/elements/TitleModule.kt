@@ -13,13 +13,13 @@ import com.makki.klotter.utils.TextMeasureUtils
 fun DrawScope.drawTitle(data: PlotTitleData, title: String, frame: Size) {
 	val measure = TextMeasureUtils.textRect(title, data.font, data.fontPaint)
 
-	val x = when(data.titleHSide) {
+	val x = when (data.titleHSide) {
 		HorizontalSide.Left -> 0f
 		HorizontalSide.Center -> frame.center.x - measure.width / 2
 		HorizontalSide.Right -> size.width - measure.width
 	}
 
-	val y = when(data.titleVSide) {
+	val y = when (data.titleVSide) {
 		VerticalSide.Top -> measure.height
 		VerticalSide.Center -> frame.center.y - measure.height / 2
 		VerticalSide.Bottom -> size.height - measure.height
