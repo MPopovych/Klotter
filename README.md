@@ -3,24 +3,24 @@
 This is a library for personal use, feel free to peek into the code or to collaborate
 
 ## Latest state
+**An example from a personal project**
 
 ![As of last update](./sample.png)
 
 ## Features
 
-- Vertical and horizontal zoom
-- Scrolling
-- Displaying data from start or end
+- Scrolling, vertical and horizontal zoom
+- Shared navigation between plots
+- Initial scroll seek to start or end of data
 - Kline drawing
 - Line drawing
 - Points drawing
-- Grid background
-- Multiple plots with shared navigation
-- Partial rendering - calculates what can be seen on screen before fetching the data
+- Grid background with values, ids or id mapping
+- Partial rendering - calculates what can be seen on screen before rendering
 - Displaying prices of last visible kline / line
-- Grid with prices
+- Datasource updates via mutableStateOf with navigation preservation
 
 ## Plans
 
-- Hover element
+- Hover element with a tooltip
 - Callbacks and data updates
