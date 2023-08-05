@@ -117,6 +117,10 @@ class PlotAxisData(
 		fun default(): PlotAxisData {
 			return PlotAxisBuilder().build()
 		}
+
+		fun disabled(): PlotAxisData {
+			return PlotAxisBuilder().grid(false).labels(false).build()
+		}
 	}
 
 	val font = Font(gridNumbersTypeface, gridNumbersFontSize)

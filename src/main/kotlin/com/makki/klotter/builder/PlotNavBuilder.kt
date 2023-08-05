@@ -72,5 +72,6 @@ class PlotNavigation internal constructor(
 		fun default(plotData: PlotData): PlotNavigation {
 			return PlotNavBuilder().fromStart().visible(64).separateVZoom().buildFor(plotData)
 		}
+		fun builder() = PlotNavBuilder()
 	}
 }
