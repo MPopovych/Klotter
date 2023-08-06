@@ -114,32 +114,51 @@ fun Plot(
 
 	// user control components
 	Row(modifier.fillMaxSize()
-		.draggable(
-			orientation = Orientation.Horizontal,
-			state = rememberDraggableState { delta ->
-				itemOffset -= delta / lastItemWidth
+		.let {
+			if (plotNavigation.allowSeek) {
+				it.draggable(
+					orientation = Orientation.Horizontal,
+					state = rememberDraggableState { delta ->
+						itemOffset -= delta / lastItemWidth
+					}
+				)
+			} else {
+				it
 			}
-		)) {
+		}) {
 		Box(modifier = modifier
 			.weight(1f)
 			.fillMaxSize()
-			.scrollable(orientation = Orientation.Vertical,
-				state = rememberScrollableState { delta ->
-					hZoom += delta
-					return@rememberScrollableState delta
+			.let {
+				if (plotNavigation.allowHorizontalZoom) {
+					it.scrollable(orientation = Orientation.Vertical,
+						state = rememberScrollableState { delta ->
+							hZoom += delta
+							return@rememberScrollableState delta
+						}
+					)
+				} else {
+					it
 				}
-			)) {
+			}) {
 
 		}
 		Box(modifier = modifier
 			.weight(1f)
 			.fillMaxSize()
-			.scrollable(orientation = Orientation.Vertical,
-				state = rememberScrollableState { delta ->
-					vZoom += delta
-					return@rememberScrollableState delta
+			.let {
+				if (plotNavigation.allowVerticalZoom) {
+					it.scrollable(orientation = Orientation.Vertical,
+						state = rememberScrollableState { delta ->
+							vZoom += delta
+							return@rememberScrollableState delta
+						}
+					)
+				} else {
+					it
 				}
-			)) {
+			}
+		) {
 		}
 	}
 }

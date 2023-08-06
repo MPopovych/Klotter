@@ -7,10 +7,31 @@ import androidx.compose.runtime.mutableStateOf
 class PlotNavBuilder(private var visible: Int? = null) {
 
 	private var direction = InitialScroll.FromStart
+	private var allowVerticalZoom: Boolean = true
+	private var allowHorizontalZoom: Boolean = true
+	private var allowSeek: Boolean = true
 	private var verticalZoom: MutableState<Float> = mutableStateOf(1f)
 	private var horizontalZoom: MutableState<Float> = mutableStateOf(1f)
 	private var updateListener: MutableState<Int> = mutableStateOf(1)
 	private var offsetState: MutableState<Float> = mutableStateOf(0f)
+
+	fun interactive(enabled: Boolean) = this.also {
+		allowSeek = enabled
+		allowHorizontalZoom = enabled
+		allowVerticalZoom = enabled
+	}
+
+	fun horizontalZoom(enabled: Boolean) = this.also {
+		allowHorizontalZoom = enabled
+	}
+
+	fun verticalZoom(enabled: Boolean) = this.also {
+		allowVerticalZoom = enabled
+	}
+
+	fun seek(enabled: Boolean) = this.also {
+		allowSeek = enabled
+	}
 
 	fun visible(count: Int?): PlotNavBuilder {
 		visible = count
@@ -50,6 +71,9 @@ class PlotNavBuilder(private var visible: Int? = null) {
 		}
 		return PlotNavigation(
 			visible = finalVisibility,
+			allowVerticalZoom = allowVerticalZoom,
+			allowHorizontalZoom = allowHorizontalZoom,
+			allowSeek = allowSeek,
 			verticalZoom = verticalZoom,
 			horizontalZoom = horizontalZoom,
 			itemOffset = offsetState,
@@ -61,17 +85,24 @@ class PlotNavBuilder(private var visible: Int? = null) {
 
 class PlotNavigation internal constructor(
 	val visible: Int,
+	val allowVerticalZoom: Boolean,
+	val allowHorizontalZoom: Boolean,
+	val allowSeek: Boolean,
 	val verticalZoom: MutableState<Float>,
 	val horizontalZoom: MutableState<Float>,
 	val itemOffset: MutableState<Float>,
 	val direction: InitialScroll,
 ) {
-	val updateListener: MutableState<Int> = mutableStateOf(1)
 
 	companion object {
 		fun default(plotData: PlotData): PlotNavigation {
 			return PlotNavBuilder().fromStart().visible(64).separateVZoom().buildFor(plotData)
 		}
+
+		fun disabledScroll(plotData: PlotData): PlotNavigation {
+			return PlotNavBuilder().fromStart().visible(64).interactive(false).separateVZoom().buildFor(plotData)
+		}
+
 		fun builder() = PlotNavBuilder()
 	}
 }
