@@ -118,6 +118,10 @@ class PlotAxisData(
 			return PlotAxisBuilder().build()
 		}
 
+		fun builder(): PlotAxisBuilder {
+			return PlotAxisBuilder()
+		}
+
 		fun disabled(): PlotAxisData {
 			return PlotAxisBuilder().grid(false).labels(false).build()
 		}
