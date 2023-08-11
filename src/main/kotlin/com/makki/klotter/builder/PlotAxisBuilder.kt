@@ -2,6 +2,8 @@ package com.makki.klotter.builder
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.skia.Font
@@ -15,10 +17,10 @@ class PlotAxisBuilder {
 	private var labelLambda: (String, Int) -> String = { s, _ -> s }
 	private var gridColor: Int = Color.White.copy(alpha = 0.2f).toArgb()
 	private var gridColumns: Boolean = true
-	private var gridColumnGap: Float = 24.dp.value
+	private var gridColumnGap: Float = 24f
 	private var gridNumbersEnabled: Boolean = true
 	private var gridNumbersSize: HorizontalSide = HorizontalSide.Left
-	private var gridNumbersFontSize: Float = 24.sp.value
+	private var gridNumbersFontSize: Float = 24f
 	private var gridNumbersTypeface: Typeface = Typeface.makeDefault()
 
 	fun grid(enabled: Boolean): PlotAxisBuilder {
@@ -107,12 +109,15 @@ class PlotAxisData(
 	val gridLabelMap: (String, Int) -> String,
 	val gridColorInt: Int,
 	val gridColumns: Boolean,
-	val gridColumnGap: Float,
+	gridColumnGap: Float,
 	val gridNumbers: Boolean,
 	val gridNumbersSide: HorizontalSide,
-	val gridNumbersFontSize: Float,
-	val gridNumbersTypeface: Typeface,
+	gridNumbersFontSize: Float,
+	gridNumbersTypeface: Typeface,
 ) {
+	val gridColumnGap = with(LocalDensity.default().value) { gridColumnGap.dp.toPx() }
+	val gridNumbersFontSize = with(LocalDensity.default().value) { gridNumbersFontSize.sp.toPx() }
+
 	companion object {
 		fun default(): PlotAxisData {
 			return PlotAxisBuilder().build()
@@ -127,7 +132,7 @@ class PlotAxisData(
 		}
 	}
 
-	val font = Font(gridNumbersTypeface, gridNumbersFontSize)
+	val font = Font(gridNumbersTypeface, this.gridNumbersFontSize)
 	val gridColor = Color(gridColorInt)
 	val gridPaint = Paint().also {
 		it.color = gridColorInt

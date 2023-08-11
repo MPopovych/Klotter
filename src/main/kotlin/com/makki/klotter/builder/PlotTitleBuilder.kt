@@ -1,7 +1,7 @@
 package com.makki.klotter.builder
 
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.sp
-import com.makki.klotter.utils.TextMeasureUtils
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.Font
 import org.jetbrains.skia.Paint
@@ -11,7 +11,7 @@ import org.jetbrains.skia.Typeface
 class PlotTitleBuilder {
 	var titleHSide: HorizontalSide = HorizontalSide.Center
 	var titleVSide: VerticalSide = VerticalSide.Top
-	var titleFontSize: Float = 24.sp.value
+	var titleFontSize: Float = 24f
 	var titleTypeface: Typeface = Typeface.makeDefault()
 	var titleColor: Int = Color.WHITE
 
@@ -85,18 +85,20 @@ class PlotTitleBuilder {
 
 class PlotTitleData(
 	val titleColor: Int,
-	val titleFontSize: Float,
+	titleFontSize: Float,
 	val titleTypeface: Typeface,
 	val titleVSide: VerticalSide,
 	val titleHSide: HorizontalSide,
 ) {
+	val titleFontSize = with(LocalDensity.default().value) { titleFontSize.sp.toPx() }
+
 	companion object {
 		fun default(): PlotTitleData {
 			return PlotTitleBuilder().build()
 		}
 	}
 
-	val font = Font(titleTypeface, titleFontSize)
+	val font = Font(titleTypeface, this.titleFontSize)
 	val fontPaint = Paint().also {
 		it.color = titleColor
 	}

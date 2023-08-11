@@ -2,6 +2,7 @@ package com.makki.klotter.builder
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.sp
 import org.jetbrains.skia.Font
 import org.jetbrains.skia.Paint
@@ -14,7 +15,7 @@ class PlotLineTrackerBuilder {
 	fun trackLine(
 		name: String,
 		textColor: Color = Color.White,
-		textSize: Float = 24.sp.value,
+		textSize: Float = 24f,
 		backgroundColor: Color = Color(227, 85, 97),
 		side: HorizontalSide = HorizontalSide.Right,
 	): PlotLineTrackerBuilder {
@@ -31,12 +32,13 @@ class PlotLineTrackerBuilder {
 
 class PlotTrackMeta(
 	val rowName: String,
-	val textColor: Color,
-	val textSize: Float,
+	private val textColor: Color,
+	textSize: Float,
 	val backgroundColor: Color,
 	val side: HorizontalSide,
 ) {
-	val font = Font(Typeface.makeDefault(), textSize)
+	private val textSize = with(LocalDensity.default().value) { textSize.sp.toPx() }
+	val font = Font(Typeface.makeDefault(), this.textSize)
 	val fontPaint = Paint().also {
 		it.color = textColor.toArgb()
 	}
