@@ -5,13 +5,16 @@ import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.unit.sp
 import com.makki.klotter.builder.HorizontalSide
 import com.makki.klotter.builder.PlotTitleData
 import com.makki.klotter.builder.VerticalSide
 import com.makki.klotter.utils.TextMeasureUtils
+import org.jetbrains.skia.Font
 
 fun DrawScope.drawTitle(data: PlotTitleData, title: String, frame: Size) {
-	val measure = TextMeasureUtils.textRect(title, data.font, data.fontPaint)
+	val font = Font(data.titleTypeface, data.titleFontSize.sp.toPx())
+	val measure = TextMeasureUtils.textRect(title, font, data.fontPaint)
 
 	val x = when (data.titleHSide) {
 		HorizontalSide.Left -> 0f
@@ -30,7 +33,7 @@ fun DrawScope.drawTitle(data: PlotTitleData, title: String, frame: Size) {
 			title,
 			x,
 			y,
-			data.font,
+			font,
 			data.fontPaint
 		)
 	}

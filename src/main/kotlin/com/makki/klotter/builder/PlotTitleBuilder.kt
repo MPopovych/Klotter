@@ -11,7 +11,7 @@ import org.jetbrains.skia.Typeface
 class PlotTitleBuilder {
 	var titleHSide: HorizontalSide = HorizontalSide.Center
 	var titleVSide: VerticalSide = VerticalSide.Top
-	var titleFontSize: Float = 24f
+	var titleFontSize: Float = 14f
 	var titleTypeface: Typeface = Typeface.makeDefault()
 	var titleColor: Int = Color.WHITE
 
@@ -85,12 +85,11 @@ class PlotTitleBuilder {
 
 class PlotTitleData(
 	val titleColor: Int,
-	titleFontSize: Float,
+	val titleFontSize: Float,
 	val titleTypeface: Typeface,
 	val titleVSide: VerticalSide,
 	val titleHSide: HorizontalSide,
 ) {
-	val titleFontSize = with(LocalDensity.default().value) { titleFontSize.sp.toPx() }
 
 	companion object {
 		fun default(): PlotTitleData {

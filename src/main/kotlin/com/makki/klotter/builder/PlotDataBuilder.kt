@@ -80,7 +80,7 @@ class PlotDataBuilder(private val ids: Collection<String>) {
 		name: String,
 		values: Map<String, Number>,
 		color: Color,
-		radius: Float = 5.dp.value,
+		radius: Float = 5f,
 		focus: Boolean = true,
 	): PlotDataBuilder {
 		val cast = if (values is HashMap) values else HashMap(values)
@@ -98,6 +98,7 @@ class PlotDataBuilder(private val ids: Collection<String>) {
 		return addRowData(name, rowData, MetaData(focus))
 	}
 
+	@Suppress("UNCHECKED_CAST")
 	fun addLineDataColumn(
 		name: String,
 		id: String,

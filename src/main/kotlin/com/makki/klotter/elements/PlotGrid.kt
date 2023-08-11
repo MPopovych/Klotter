@@ -4,10 +4,13 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.makki.klotter.builder.HorizontalSide
 import com.makki.klotter.builder.PlotAxisData
 import com.makki.klotter.utils.TextMeasureUtils
 import com.makki.klotter.utils.isNanDebug
+import org.jetbrains.skia.Font
 import java.math.RoundingMode
 import kotlin.math.ceil
 import kotlin.math.max
@@ -37,7 +40,7 @@ private fun DrawScope.drawColumns(
 
 	val gridWidth = c.plotRect.width / max(c.canFit, 1f)
 	if (gridWidth.isNanDebug()) throw IllegalStateException()
-	val columnMultiplier = ceil(axisData.gridColumnGap / gridWidth).roundToInt()
+	val columnMultiplier = ceil(axisData.gridColumnGap.dp.toPx() / gridWidth).roundToInt()
 
 	var count = 0
 	var lastLabelBorder = 0f
@@ -110,9 +113,10 @@ fun DrawScope.drawNumber(
 	axisData: PlotAxisData,
 	c: DrawContext,
 ) {
+	val font = Font(axisData.gridNumbersTypeface, axisData.gridNumbersFontSize.sp.toPx())
 	val ySafe = y ?: c.getYForData(number)
 	val text = "$number"
-	val measure = TextMeasureUtils.textRect(text, axisData.font, axisData.gridPaint)
+	val measure = TextMeasureUtils.textRect(text, font, axisData.gridPaint)
 	val x = when (axisData.gridNumbersSide) {
 		HorizontalSide.Left -> c.leftPaddingRect.right - measure.width - c.itemWidth
 		HorizontalSide.Center -> c.leftPaddingRect.right + c.plotRect.width / 2 - measure.width / 2
@@ -124,7 +128,7 @@ fun DrawScope.drawNumber(
 			text,
 			x,
 			ySafe,
-			axisData.font,
+			font,
 			axisData.gridPaint
 		)
 	}

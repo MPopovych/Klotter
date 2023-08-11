@@ -20,7 +20,7 @@ class PlotAxisBuilder {
 	private var gridColumnGap: Float = 24f
 	private var gridNumbersEnabled: Boolean = true
 	private var gridNumbersSize: HorizontalSide = HorizontalSide.Left
-	private var gridNumbersFontSize: Float = 24f
+	private var gridNumbersFontSize: Float = 12f
 	private var gridNumbersTypeface: Typeface = Typeface.makeDefault()
 
 	fun grid(enabled: Boolean): PlotAxisBuilder {
@@ -109,14 +109,12 @@ class PlotAxisData(
 	val gridLabelMap: (String, Int) -> String,
 	val gridColorInt: Int,
 	val gridColumns: Boolean,
-	gridColumnGap: Float,
+	val gridColumnGap: Float,
 	val gridNumbers: Boolean,
 	val gridNumbersSide: HorizontalSide,
-	gridNumbersFontSize: Float,
-	gridNumbersTypeface: Typeface,
+	val gridNumbersFontSize: Float,
+	val gridNumbersTypeface: Typeface,
 ) {
-	val gridColumnGap = with(LocalDensity.default().value) { gridColumnGap.dp.toPx() }
-	val gridNumbersFontSize = with(LocalDensity.default().value) { gridNumbersFontSize.sp.toPx() }
 
 	companion object {
 		fun default(): PlotAxisData {

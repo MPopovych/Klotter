@@ -15,7 +15,7 @@ class PlotLineTrackerBuilder {
 	fun trackLine(
 		name: String,
 		textColor: Color = Color.White,
-		textSize: Float = 24f,
+		textSize: Float = 12f,
 		backgroundColor: Color = Color(227, 85, 97),
 		side: HorizontalSide = HorizontalSide.Right,
 	): PlotLineTrackerBuilder {
@@ -33,12 +33,11 @@ class PlotLineTrackerBuilder {
 class PlotTrackMeta(
 	val rowName: String,
 	private val textColor: Color,
-	textSize: Float,
+	val textSize: Float,
 	val backgroundColor: Color,
 	val side: HorizontalSide,
 ) {
-	private val textSize = with(LocalDensity.default().value) { textSize.sp.toPx() }
-	val font = Font(Typeface.makeDefault(), this.textSize)
+	val typeface = Typeface.makeDefault()
 	val fontPaint = Paint().also {
 		it.color = textColor.toArgb()
 	}

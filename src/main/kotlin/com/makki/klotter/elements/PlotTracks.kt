@@ -5,10 +5,13 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.unit.sp
 import com.makki.klotter.builder.HorizontalSide
 import com.makki.klotter.builder.PlotAxisData
 import com.makki.klotter.builder.PlotData
 import com.makki.klotter.utils.TextMeasureUtils
+import org.jetbrains.skia.Font
+import org.jetbrains.skia.Typeface
 import java.math.RoundingMode
 import kotlin.math.*
 
@@ -22,8 +25,9 @@ fun DrawScope.drawTracks(
 	val trackPairs = plotData.plotDataCache?.getTracksForIndex(endId) ?: return
 
 	trackPairs.forEach { (meta, value) ->
+		val font = Font(meta.typeface, meta.textSize.sp.toPx())
 		val text = "$value"
-		val measure = TextMeasureUtils.textRect(text, meta.font, meta.fontPaint)
+		val measure = TextMeasureUtils.textRect(text, font, meta.fontPaint)
 		val y = c.getYForData(value)
 		val x = c.rightPaddingRect.left
 		c.canvas.drawRect(
@@ -36,7 +40,7 @@ fun DrawScope.drawTracks(
 				text,
 				x + 5f,
 				y + measure.height / 2 + 2.5f,
-				meta.font,
+				font,
 				meta.fontPaint
 			)
 		}
