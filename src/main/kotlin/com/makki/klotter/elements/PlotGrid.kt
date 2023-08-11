@@ -42,6 +42,8 @@ private fun DrawScope.drawColumns(
 	if (gridWidth.isNanDebug()) throw IllegalStateException()
 	val columnMultiplier = ceil(axisData.gridColumnGap.dp.toPx() / gridWidth).roundToInt()
 
+	val font = Font(axisData.gridNumbersTypeface, axisData.gridNumbersFontSize)
+
 	var count = 0
 	var lastLabelBorder = 0f
 	val reduced = max(0, -startId)
@@ -63,7 +65,8 @@ private fun DrawScope.drawColumns(
 						current,
 						x,
 						axisData,
-						c
+						c,
+						font
 					)
 				}
 			}
@@ -79,6 +82,7 @@ private fun DrawScope.drawRowsAndNumbers(
 	val dataHeightSafe = if (c.dataHeight == 0f) 1f else c.dataHeight
 
 	val pair = findClosestPower(dataHeightSafe)
+	val font = Font(axisData.gridNumbersTypeface, axisData.gridNumbersFontSize.sp.toPx())
 	val topBound = c.plotRect.top
 	val botBound = topBound + c.plotRect.height
 	val power = pair.first
@@ -100,8 +104,9 @@ private fun DrawScope.drawRowsAndNumbers(
 				Offset(leftPoint + c.plotRect.width, y),
 			)
 		}
+
 		if (axisData.gridNumbers && pureY in (topBound..botBound)) {
-			drawNumber(highestPoint, y, axisData, c)
+			drawNumber(highestPoint, y, axisData, c, font)
 		}
 		highestPoint = (highestPoint - power).round(decimal)
 	}
@@ -112,8 +117,8 @@ fun DrawScope.drawNumber(
 	y: Float?,
 	axisData: PlotAxisData,
 	c: DrawContext,
+	font: Font
 ) {
-	val font = Font(axisData.gridNumbersTypeface, axisData.gridNumbersFontSize.sp.toPx())
 	val ySafe = y ?: c.getYForData(number)
 	val text = "$number"
 	val measure = TextMeasureUtils.textRect(text, font, axisData.gridPaint)
@@ -143,9 +148,10 @@ fun DrawScope.drawId(
 	x: Float,
 	axisData: PlotAxisData,
 	c: DrawContext,
+	font: Font
 ): Float {
 	val text = axisData.gridLabelMap(id, relativeIndex)
-	val measure = TextMeasureUtils.textRect(text, axisData.font, axisData.gridPaint)
+	val measure = TextMeasureUtils.textRect(text, font, axisData.gridPaint)
 	val y = c.axisRect.top + c.plotRect.height
 
 	drawIntoCanvas {// sub to updates
@@ -153,7 +159,7 @@ fun DrawScope.drawId(
 			text,
 			x,
 			y + measure.height,
-			axisData.font,
+			font,
 			axisData.gridPaint
 		)
 	}

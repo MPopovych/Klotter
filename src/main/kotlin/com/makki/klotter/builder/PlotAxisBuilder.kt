@@ -130,7 +130,6 @@ class PlotAxisData(
 		}
 	}
 
-	val font = Font(gridNumbersTypeface, this.gridNumbersFontSize)
 	val gridColor = Color(gridColorInt)
 	val gridPaint = Paint().also {
 		it.color = gridColorInt

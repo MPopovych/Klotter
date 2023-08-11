@@ -97,7 +97,6 @@ class PlotTitleData(
 		}
 	}
 
-	val font = Font(titleTypeface, this.titleFontSize)
 	val fontPaint = Paint().also {
 		it.color = titleColor
 	}
