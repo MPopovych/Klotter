@@ -68,8 +68,13 @@ fun Plot(
 				var dataTop = PlotDataUtils.getTopOfVisibleValue(visibleRange, plotData) ?: 1f
 				var dataBot = PlotDataUtils.getBotOfVisibleValue(visibleRange, plotData) ?: -1f
 				if (dataTop - dataBot == 0.0f) {
-					dataTop *= 1.05f
-					dataBot /= 1.05f
+					if (dataTop == 0f) {
+						dataTop += 05f
+						dataBot -= 05f
+					} else {
+						dataTop *= 1.05f
+						dataBot /= 1.05f
+					}
 				}
 				val mid = (dataTop + dataBot) / 2f
 				if (mid.isNanDebug()) throw IllegalStateException()
