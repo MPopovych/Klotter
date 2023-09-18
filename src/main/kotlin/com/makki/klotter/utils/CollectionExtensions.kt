@@ -3,10 +3,16 @@ package com.makki.klotter.utils
 import kotlin.math.max
 import kotlin.math.min
 
+/** Unsorted op **/
 fun <T> List<T>.splitInto(n: Int): List<List<T>> {
 	return this.withIndex().groupBy {
 		it.index % n
 	}.map { grouped -> grouped.value.map { indexed -> indexed.value } }
+}
+
+fun <T> List<T>.chunkInto(n: Int): List<List<T>> {
+	val chunkSize = (size + n - 1) / n
+	return this.chunked(chunkSize)
 }
 
 fun <T> List<T>.safeSub(from: Int, to: Int): List<T> {
